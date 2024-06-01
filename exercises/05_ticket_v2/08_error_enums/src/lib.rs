@@ -1,14 +1,22 @@
-// TODO: Use two variants, one for a title error and one for a description error.
-//   Each variant should contain a string with the explanation of what went wrong exactly.
-//   You'll have to update the implementation of `Ticket::new` as well.
-enum TicketNewError {}
+use crate::TicketNewError::{DescriptionEmpty, DescriptionTooLong, TitleEmpty, TitleTooLong};
 
-// TODO: `easy_ticket` should panic when the title is invalid, using the error message
-//   stored inside the relevant variant of the `TicketNewError` enum.
-//   When the description is invalid, instead, it should use a default description:
-//   "Description not provided".
+#[derive(Debug)]
+enum TicketNewError {
+    TitleEmpty,
+    TitleTooLong,
+    DescriptionEmpty,
+    DescriptionTooLong,
+}
+
 fn easy_ticket(title: String, description: String, status: Status) -> Ticket {
-    todo!()
+    match Ticket::new(title.clone(), description.clone(), status.clone()) {
+        Ok(ticket) => ticket,
+        Err(error) => match error {
+            TitleEmpty => panic!("Title cannot be empty"),
+            TitleTooLong => panic!("Title cannot be longer than 50 bytes"),
+            _ => Ticket::new(title, "Description not provided".into(), status).unwrap(),
+        },
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -32,16 +40,16 @@ impl Ticket {
         status: Status,
     ) -> Result<Ticket, TicketNewError> {
         if title.is_empty() {
-            return Err("Title cannot be empty".to_string());
+            return Err(TitleEmpty);
         }
         if title.len() > 50 {
-            return Err("Title cannot be longer than 50 bytes".to_string());
+            return Err(TitleTooLong);
         }
         if description.is_empty() {
-            return Err("Description cannot be empty".to_string());
+            return Err(DescriptionEmpty);
         }
         if description.len() > 500 {
-            return Err("Description cannot be longer than 500 bytes".to_string());
+            return Err(DescriptionTooLong);
         }
 
         Ok(Ticket {
@@ -54,8 +62,9 @@ impl Ticket {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use common::{overly_long_description, overly_long_title, valid_description, valid_title};
+
+    use super::*;
 
     #[test]
     #[should_panic(expected = "Title cannot be empty")]

@@ -1,5 +1,3 @@
-// TODO: Implement `Ticket::assigned_to` using `Option` as the return type.
-
 #[derive(Debug, PartialEq)]
 struct Ticket {
     title: String,
@@ -36,14 +34,18 @@ impl Ticket {
         }
     }
     pub fn assigned_to(&self) -> Option<&String> {
-        todo!()
+        match &self.status {
+            Status::InProgress { assigned_to } => Some(assigned_to),
+            _ => None,
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use common::{valid_description, valid_title};
+
+    use super::*;
 
     #[test]
     fn test_todo() {

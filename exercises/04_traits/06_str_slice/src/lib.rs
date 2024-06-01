@@ -31,24 +31,26 @@ impl Ticket {
         }
     }
 
-    pub fn title(&self) -> &String {
+    pub fn title(&self) -> &str {
         &self.title
     }
 
-    pub fn description(&self) -> &String {
+    pub fn description(&self) -> &str {
         &self.description
     }
 
-    pub fn status(&self) -> &String {
+    pub fn status(&self) -> &str {
         &self.status
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use common::{valid_description, valid_title};
     use std::any::{Any, TypeId};
+
+    use common::{valid_description, valid_title};
+
+    use super::*;
 
     #[test]
     fn test_type() {

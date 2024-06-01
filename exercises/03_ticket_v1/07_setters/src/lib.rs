@@ -1,8 +1,3 @@
-// TODO: Add &mut-setters to the `Ticket` struct for each of its fields.
-//   Make sure to enforce the same validation rules you have in `Ticket::new`!
-//   Even better, extract that logic and reuse it in both places. You can use
-//   private functions or private static methods for that.
-
 pub struct Ticket {
     title: String,
     description: String,
@@ -11,21 +6,9 @@ pub struct Ticket {
 
 impl Ticket {
     pub fn new(title: String, description: String, status: String) -> Ticket {
-        if title.is_empty() {
-            panic!("Title cannot be empty");
-        }
-        if title.len() > 50 {
-            panic!("Title cannot be longer than 50 bytes");
-        }
-        if description.is_empty() {
-            panic!("Description cannot be empty");
-        }
-        if description.len() > 500 {
-            panic!("Description cannot be longer than 500 bytes");
-        }
-        if status != "To-Do" && status != "In Progress" && status != "Done" {
-            panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed");
-        }
+        Self::check_title(&title);
+        Self::check_description(&description);
+        Self::check_status(&status);
 
         Ticket {
             title,
@@ -34,23 +17,63 @@ impl Ticket {
         }
     }
 
+    pub fn set_title(&mut self, title: String) {
+        Self::check_title(&title);
+        self.title = title;
+    }
+
     pub fn title(&self) -> &String {
         &self.title
+    }
+
+    pub fn set_description(&mut self, description: String) {
+        Self::check_description(&description);
+        self.description = description;
     }
 
     pub fn description(&self) -> &String {
         &self.description
     }
 
+    pub fn set_status(&mut self, status: String) {
+        Self::check_status(&status);
+        self.status = status;
+    }
+
     pub fn status(&self) -> &String {
         &self.status
+    }
+
+    fn check_title(title: &str) {
+        if title.is_empty() {
+            panic!("Title cannot be empty");
+        }
+        if title.len() > 50 {
+            panic!("Title cannot be longer than 50 bytes");
+        }
+    }
+
+    fn check_description(description: &str) {
+        if description.is_empty() {
+            panic!("Description cannot be empty");
+        }
+        if description.len() > 500 {
+            panic!("Description cannot be longer than 500 bytes");
+        }
+    }
+
+    fn check_status(status: &str) {
+        if status != "To-Do" && status != "In Progress" && status != "Done" {
+            panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed");
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::Ticket;
     use common::{overly_long_description, overly_long_title, valid_description, valid_title};
+
+    use super::Ticket;
 
     #[test]
     fn works() {
