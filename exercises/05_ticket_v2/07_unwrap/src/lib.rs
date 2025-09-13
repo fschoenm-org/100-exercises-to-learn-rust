@@ -1,8 +1,14 @@
-// TODO: `easy_ticket` should panic when the title is invalid.
-//   When the description is invalid, instead, it should use a default description:
-//   "Description not provided".
 fn easy_ticket(title: String, description: String, status: Status) -> Ticket {
-    todo!()
+    match Ticket::new(title.clone(), description, status.clone()) {
+        Ok(ticket) => ticket,
+        Err(error) => {
+            if error.contains("Description") {
+                Ticket::new(title, "Description not provided".into(), status).unwrap()
+            } else {
+                panic!("{error}");
+            }
+        }
+    }
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -44,8 +50,9 @@ impl Ticket {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use common::{overly_long_description, overly_long_title, valid_description, valid_title};
+
+    use super::*;
 
     #[test]
     #[should_panic(expected = "Title cannot be empty")]
